@@ -22,9 +22,11 @@ AFLAGS	= -O2 -g
 
 ifneq ($(HAS_LIBDISPATCH),0)
 ifneq ($(LIBDISPATCH_INC_DIR),)
-COMMONFLAGS += -DHAS_LIBDISPATCH -I$(LIBDISPATCH_INC_DIR) -L$(LIBDISPATCH_LIB_DIR) -ldispatch -fblocks -lBlocksRuntime
+COMMONFLAGS += -DHAS_LIBDISPATCH -I$(LIBDISPATCH_INC_DIR) -fblocks
+LDFLAGS += -L$(LIBDISPATCH_LIB_DIR) -ldispatch -lBlocksRuntime
 else
-COMMONFLAGS += -DHAS_LIBDISPATCH -ldispatch -fblocks -lBlocksRuntime
+COMMONFLAGS += -DHAS_LIBDISPATCH -fblocks
+LDFLAGS += -ldispatch -lBlocksRuntime
 endif
 endif
 
@@ -77,7 +79,7 @@ endef
 $(foreach decompr,1 2 3 4,$(eval $(call decompressors,$(decompr))))
 
 $(PROG): $(OBJS)
-	$(CXX) $(CFLAGS) -o $(PROG) $(OBJS) 
+	$(CXX) $(CFLAGS) $(LDFLAGS) -o $(PROG) $(OBJS) 
 
 $(SLINKS): $(PROG)
 	ln -sf $< $@
