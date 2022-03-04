@@ -34,10 +34,18 @@ endif
 
 ifeq ($(BITS),64)
 COMMONFLAGS += -m64
+ifdef __APPLE__
+AFLAGS	+= -fmacho64
+else
 AFLAGS	+= -felf64
+endif
 else
 COMMONFLAGS += -m32
+ifdef __APPLE__
+AFLAGS	+= -fmacho32
+else
 AFLAGS	+= -felf32
+endif
 endif
 
 PROG	:= onekpaq
@@ -45,13 +53,11 @@ SLINKS	:= onekpaq_encode #onekpaq_decode
 OBJS	:= obj/ArithEncoder.cpp.o obj/ArithDecoder.cpp.o obj/BlockCodec.cpp.o obj/StreamCodec.cpp.o obj/CacheFile.cpp.o \
 	obj/onekpaq_main.cpp.o obj/log.c.o
 
-ifeq ($(BITS),32)
 OBJS := $(OBJS) obj/AsmDecode.cpp.o $(foreach decompr,1 2 3 4,obj/onekpaq_cfunc_$(decompr).asm.o)
-endif
 
 all: $(SLINKS)
 
-%/:
+obj/:
 	mkdir -p "$@"
 
 #obj/%.asm.o: %.asm obj/

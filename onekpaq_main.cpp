@@ -108,7 +108,6 @@ int main(int argc,char **argv)
 			ASSERT(src[i]==verify2[i],"%u: %02x!=%02x",i,src[i],verify2[i]);
 		INFO("ASM Data verified");
 
-#ifndef __x86_64__
 		INFO("Using actual ASM-decompressor");
 		// now same thing with asm-decoder
 		auto asmVerify=AsmDecode(s.GetAsmDest1(),s.GetAsmDest2(),mode,s.GetShift());
@@ -116,7 +115,7 @@ int main(int argc,char **argv)
 		// asm decoder does not know anything about size, we can only verify contents
 		for (uint i=0;i<src.size();i++)
 			ASSERT(src[i]==asmVerify[i],"%u: %02x!=%02x",i,src[i],asmVerify[i]);
-#endif
+
 		INFO("ASM-decompressor finished");
 #endif
 
