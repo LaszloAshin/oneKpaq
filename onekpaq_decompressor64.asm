@@ -81,7 +81,7 @@
 	; dest filled out with unpacked data
 	; all registers contents destroyed
 	; xmm0 & xmm1 contents destroyed when using fast variant
-	; 168 bytes of stack used (112? bytes for fast variant)
+	; 144 bytes of stack used (112? bytes for fast variant)
 onekpaq_decompressor:
 	DEBUG "oneKpaq decompression started..."
 
@@ -203,12 +203,9 @@ onekpaq_decompressor:
 	shr eax,cl
 	jnz short .match_no_hit
 %else
-	; deepest stack usage 56+56+56 bytes = 168 bytes
+	; deepest stack usage 32+56+56 bytes = 144 bytes
 	push rax
 	push rcx
-	push rdx
-	push rbx
-	push rbp
 	push rsi
 	push rdi
 
@@ -231,9 +228,6 @@ onekpaq_decompressor:
 .match_mask_miss:
 	pop rdi
 	pop rsi
-	pop rbp
-	pop rbx
-	pop rdx
 	pop rcx
 	pop rax
 	jnz short .match_no_hit
