@@ -77,7 +77,7 @@ int main(int argc,char **argv)
 			ASSERT(blocks[i].size(),"Empty/missing file");
 		}
 
-		struct stat st;
+		//struct stat st;
 		//ASSERT(::stat(argv[argc-1],&st)==-1,"Destination file exists");
 
 		StreamCodec s;
