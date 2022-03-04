@@ -20,13 +20,8 @@ _onekpaq_decompressor_mode%[ONEKPAQ_DECOMPRESSOR_MODE]:
 ; cfunc(src, dest) -> rdi=src, rsi=dest
 ; onekpaq_decomp needs: ebx=src edi=dest
 
-	push rax
-	push rcx
-	push rdx
-	push rbx
 	push rbp
-	push rsi
-	push rdi
+	push rbx
 	mov rbx, rdi
 	mov rdi, rsi
 
@@ -34,13 +29,8 @@ _onekpaq_decompressor_mode%[ONEKPAQ_DECOMPRESSOR_MODE]:
 
 %include "onekpaq_decompressor64.asm"
 
-	pop rdi
-	pop rsi
-	pop rbp
 	pop rbx
-	pop rdx
-	pop rcx
-	pop rax
+	pop rbp
 	ret
 
 %ifidn __OUTPUT_FORMAT__, elf64

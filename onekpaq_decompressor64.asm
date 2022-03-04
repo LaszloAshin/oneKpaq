@@ -61,15 +61,15 @@
 ;; ---------------------------------------------------------------------------
 
 	bits 64
-	cpu x64				; enable SSE
+	cpu x64
 
 ;; end of preproc and setup, start of real stuff
 
 	; embeddable code block
 	;
 	; inputs:
-	; ebx concatenated block1+block2, pointer to start of block2
-	; edi dest (must be zero filled and writable from -13 byte offset
+	; rbx concatenated block1+block2, pointer to start of block2
+	; rdi dest (must be zero filled and writable from -13 byte offset
 	;     to the expected length plus one byte)
 	; header+src+dest buffers must not overlap
 	; d flag clear
@@ -81,11 +81,11 @@
 	; dest filled out with unpacked data
 	; all registers contents destroyed
 	; xmm0 & xmm1 contents destroyed when using fast variant
-	; 144 bytes of stack used (112? bytes for fast variant)
+	; 88 bytes of stack used (56 bytes for fast variant)
 onekpaq_decompressor:
 	DEBUG "oneKpaq decompression started..."
 
-	lea rsi,[byte rdi-(9+4)]	; esi=dest, edi=window start
+	lea rsi,[byte rdi-(9+4)]	; rsi=dest, rdi=window start
 	lodsd
 	inc eax
 	mov ecx,eax
@@ -109,21 +109,21 @@ onekpaq_decompressor:
 .block_loop:
 	; loop level 1
 	; eax range
-	; ebx src
+	; rbx src
 	; ecx dest bit shift
-	; edx header
-	; esi dest
-	; edi window start
+	; rdx header
+	; rsi dest
+	; rdi window start
 	; ebp value
 .byte_loop:
 .bit_loop:
 	; loop level 2
 	; eax range
-	; ebx src
+	; rbx src
 	; ecx dest bit shift
-	; edx header
-	; esi dest
-	; edi window start
+	; rdx header
+	; rsi dest
+	; rdi window start
 	; ebp value
 .normalize_start:
 	add eax,eax
@@ -137,37 +137,27 @@ onekpaq_decompressor:
 	push rax
 	push rcx
 	push rdx
-	push rbx
-	push rbp
-	push rsi
-	push rdi
-	;salc
+
 	mov al, 00h
-	jnc .alok
-	dec al
-.alok:
 .context_loop:
 	; loop level 3
 	; al 0
 	; eax negative
-	; ebx src
+	; rbx src
 	; cl dest bit shift
  	; ch model
-	; edx header
-	; esi dest
-	; edi window start
+	; rdx header
+	; rsi dest
+	; rdi window start
 	; ebp value
 	; st0 p
-	; [esp] ad
+	; [rsp] ad
 
 	mov ch,[rdx]
 
 	push rax
 	push rcx
 	push rdx
-	push rbx
-	push rbp
-	push rsi
 	push rdi
 	cdq
 	mov [rbx],edx			; c0 = c1 = -1
@@ -179,15 +169,15 @@ onekpaq_decompressor:
 .model_loop:
 	; loop level 4
 	; al 0
-	; [ebx] c1
+	; [rbx] c1
 	; cl dest bit shift
 	; ch model
 	; edx c0
-	; esi dest
-	; edi window start
+	; rsi dest
+	; rdi window start
 	; st0 p
-	; [esp] ad
-	; [esp+32] ad
+	; [rsp] ad
+	; [rsp+32] ad
 
 %ifdef ONEKPAQ_DECOMPRESSOR_FAST
 	movq xmm1,[rdi]			; SSE
@@ -203,7 +193,7 @@ onekpaq_decompressor:
 	shr eax,cl
 	jnz short .match_no_hit
 %else
-	; deepest stack usage 32+56+56 bytes = 144 bytes
+	; deepest stack usage 24+32+32 bytes = 88 bytes
 	push rax
 	push rcx
 	push rsi
@@ -281,9 +271,6 @@ onekpaq_decompressor:
 
 .model_early_start:
 	pop rdi
-	pop rsi
-	pop rbp
-	pop rbx
 	pop rdx
 	pop rcx
 	pop rax
@@ -299,10 +286,6 @@ onekpaq_decompressor:
 	cmp al,[rdx]
 	jnz short .context_loop
 
-	pop rdi
-	pop rsi
-	pop rbp
-	pop rbx
 	pop rdx
 	pop rcx
 	pop rax

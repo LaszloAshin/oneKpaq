@@ -80,6 +80,7 @@ std::vector<u8> AsmDecode(const std::vector<u8> &src1,const std::vector<u8> &src
 	const uint destStartMargin=13;
 
 	uint dIndex=static_cast<uint>(mode)-1;
+	INFO("Asm decompressor size: %llu",decompressorSizes[dIndex]);
 	AsmDecompressor decompr=(AsmDecompressor)makeCodeblock(decompressors[dIndex],decompressorSizes[dIndex]);
 	((u8*)(void*)decompr)[decompressorShiftOffsets[dIndex]]=shift;
 	makeRunnable((void*)decompr,decompressorSizes[dIndex]);
