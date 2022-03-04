@@ -34,14 +34,14 @@ endif
 
 ifeq ($(BITS),64)
 COMMONFLAGS += -m64
-ifdef __APPLE__
+ifeq ($(shell uname -s),Darwin)
 AFLAGS	+= -fmacho64
 else
 AFLAGS	+= -felf64
 endif
 else
 COMMONFLAGS += -m32
-ifdef __APPLE__
+ifeq ($(shell uname -s),Darwin)
 AFLAGS	+= -fmacho32
 else
 AFLAGS	+= -felf32
